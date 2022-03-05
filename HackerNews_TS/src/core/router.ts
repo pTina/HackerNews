@@ -2,7 +2,7 @@
 import { RouteInfo } from '../types';
 // ./ => 현재 디렉터리 의미, .ts 확장자 생략 가능
 // default export는 바로 이름을 지어주면 된다.(쓰고 싶은 이름으로 지을 수 있음, 보통 같은 이름 사용)
-import View from './views';
+import View from './view';
 
 // export default => 기본으로 가져가겠다.
 export default class Router {
