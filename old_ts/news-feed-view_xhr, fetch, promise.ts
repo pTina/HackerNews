@@ -37,7 +37,7 @@ export default class NewsFeedView extends View{
         
     }
 
-    render = async (page: string = '1'): Promise<void> => {
+    render = (page: string = '1'): void => {
         this.store.currentPage = Number(page);
 
         // 라우터가 렌더 함수를 호출할 때
@@ -50,11 +50,22 @@ export default class NewsFeedView extends View{
         // 근데 아까 생성자에서 호출했던 api응답이 왔어다면?
         // 이땐 어뜨케?? => 이런 문제들이 발생하기 때문에
         // 생성자에서 api호출하는 부분을 render함수로 이동시킴
-        if (!this.store.hasFeeds) {
-            this.store.setFeeds(await this.api.getData());
+        if (this.store.hasFeeds) {
+            this.api.getDataWithPromise((feeds: NewsFeed[])=>{
+                this.store.setFeeds(feeds);
+                // 데이터가 있으면 그려지고
+                this.renderView();
+                this.lastPage = Math.round(this.store.feedsLength / 10);
+            })
+            
         }
 
+        // 없으면 아무 동작X
+        this.renderView();
         this.lastPage = Math.round(this.store.feedsLength / 10);
+    }
+
+    renderView = () => {
         for (let i = (this.store.currentPage - 1) * 10; i < (this.store.currentPage * 10); i++) {
             const { id, title, user, points, comments_count, read} = this.store.getFeed(i);
             this.addHtml(`
@@ -82,6 +93,5 @@ export default class NewsFeedView extends View{
     
         this.updateView();
 
-        
     }
 }

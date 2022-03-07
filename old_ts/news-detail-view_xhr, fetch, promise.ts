@@ -27,21 +27,21 @@ export default class NewsDetailView extends View{
         this.store = store;
     }
 
-    // Promise 객체를 리턴하지 않지만
-    // async 함수이기 때문에 리턴에 Promise<void> 요런식으로 처리를 해주어야 한다.
-    render = async (id: string): Promise<void> => {
+    render = (id: string): void => {
         const api = new NewsDetailApi(CONTENT_URL.replace('@id', id));
+        api.getDataWithPromise((data: NewsDetail)=>{
+            const { title, content, comments } = data;
 
-        const { title, content, comments } = await api.getData();
-
-        this.store.makeRead(Number(id));
-    
-        this.setTemplateData('currentPage', String(this.store.currentPage));
-        this.setTemplateData('comments', this.makeComment(comments));
-        this.setTemplateData('title', title);
-        // this.setTemplateData('content', this.makeContent(content));
+            this.store.makeRead(Number(id));
         
-        this.updateView(); 
+            this.setTemplateData('currentPage', String(this.store.currentPage));
+            this.setTemplateData('comments', this.makeComment(comments));
+            this.setTemplateData('title', title);
+            // this.setTemplateData('content', this.makeContent(content));
+            
+            this.updateView(); 
+
+        })
        
     }
 
